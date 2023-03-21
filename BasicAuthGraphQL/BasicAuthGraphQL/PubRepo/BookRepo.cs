@@ -6,12 +6,12 @@ namespace BasicAuthGraphQL.PubRepo
 {
     public class BookRepo
     {
-        private readonly List<Book> _books = new() {
-            new Book() { Id = "ISBN1", Name = "Book1", AuthorId = 1},
-            new Book() { Id ="ISBN2", Name = "Book2" , AuthorId = 1},
-            new Book() { Id ="ISBN3", Name = "Book3", AuthorId = 2 }
-        };
-
+        //private readonly List<Book> _books = new() {
+        //    new Book() { Id = "ISBN1", Name = "Book1", AuthorId = 1},
+        //    new Book() { Id ="ISBN2", Name = "Book2" , AuthorId = 1},
+        //    new Book() { Id ="ISBN3", Name = "Book3", AuthorId = 2 }
+        //};
+        private readonly List<Book> _books = new();
         private int _id = 3;
 
         public Task<IEnumerable<Book>> BooksAsync
@@ -43,6 +43,15 @@ namespace BasicAuthGraphQL.PubRepo
             lock (_books)
                 _books.Add(book);
             return Task.FromResult(book);
+        }
+
+        public Task AddBookAsync(Book book)
+        {
+            lock (_books)
+            {
+                _books.Add(book);
+                return Task.FromResult(book);
+            }
         }
 
         public Task<Book?> RemoveAsync(string id)

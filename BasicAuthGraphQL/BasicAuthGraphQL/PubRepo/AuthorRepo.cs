@@ -5,12 +5,23 @@ namespace BasicAuthGraphQL.PubRepo
 {
     public class AuthorRepo
     {
-        private readonly List<Author> _authors = new() {
-            new Author() { Id = 1, Name = "Alex" },
-            new Author() { Id = 2, Name = "Sam" }
-        };
+        private readonly List<Author> _authors = new List<Author>();
+        private int _id = 1;
 
-        private int _id = 3;
+        public AuthorRepo(BookRepo bookRepo)
+        {
+            Author a = new Author() { Id = Interlocked.Increment(ref _id), Name = "Alex", Books = new List<Book>() };
+            a.Books.Add(new Book(){Id = $"ISBN{Interlocked.Increment(ref _id)}", Name = "Hardy Boys", AuthorId = a.Id, Author = a});
+
+            Author b = new Author() { Id = Interlocked.Increment(ref _id), Name = "Alex", Books = new List<Book>() };
+            b.Books.Add(new Book() { Id = $"ISBN{Interlocked.Increment(ref _id)}", Name = "Nancy Drew", AuthorId = b.Id, Author = b });
+
+            _authors.Add(a);
+            _authors.Add(b);
+
+            a.Books.ForEach(bk => bookRepo.AddBookAsync(bk));
+            b.Books.ForEach(bk => bookRepo.AddBookAsync(bk));
+        }
 
         public Task<IEnumerable<Author>> AuthorsAsync
         {
