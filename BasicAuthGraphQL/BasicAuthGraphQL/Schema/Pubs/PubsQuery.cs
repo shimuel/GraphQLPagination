@@ -13,42 +13,44 @@ namespace BasicAuthGraphQL.Schema.Pubs
         public PubsQuery([FromServices] AuthorRepo authorRepo, BookRepo bookRepo)
         {
             //this.AuthorizeWithPolicy(Constants.POLICY_READ2);
-
-            Field<ListGraphType<AuthorType>>(
+            Name = "PubsQuery";
+            FieldAsync<ListGraphType<AuthorType>>(
                 "Authors",
-                resolve: context =>
+                resolve: async context =>
                 {
-                    return authorRepo.Authors;
+                    return await authorRepo.AuthorsAsync;
                 }
             ).AuthorizeWithPolicy(Constants.POLICY_READ);
 
-            Field<ListGraphType<BookType>>(
-                "Books",
-                resolve: context =>
-                {
-                    return bookRepo.Books;
-                }
-            ).AuthorizeWithPolicy(Constants.POLICY_READ);
-
-            Field<AuthorType>(
-                "Author",
+            FieldAsync<AuthorType>(
+                "authorById",
                 arguments: new QueryArguments(new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "id" }),
-                resolve: context =>
+                resolve: async context =>
                 {
                     var id = context.GetArgument<int>("id");
-                    var rtnAuth = authorRepo[id];
+                    var rtnAuth = await authorRepo.GetAuthorAsync(id);
+                    
                     return rtnAuth;
                 }
             ).AuthorizeWithPolicy(Constants.POLICY_READ);
 
-            Field<BookType>(
-                "Book",
+
+            FieldAsync<ListGraphType<BookType>>(
+                "Books",
+                resolve: async context =>
+                {
+                    return await bookRepo.BooksAsync;
+                }
+            ).AuthorizeWithPolicy(Constants.POLICY_READ);
+
+            FieldAsync<BookType>(
+                "BookById",
                 arguments: new QueryArguments(new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "id" }),
-                resolve: context =>
+                resolve: async context =>
                 {
                     var id = context.GetArgument<string>("id");
                     var bookId = $"ISBN{id}";
-                    var rtnBook = bookRepo[bookId];
+                    var rtnBook = await bookRepo.GetBookAsync(bookId);
                     return rtnBook;
                 }
             ).AuthorizeWithPolicy(Constants.POLICY_READ);

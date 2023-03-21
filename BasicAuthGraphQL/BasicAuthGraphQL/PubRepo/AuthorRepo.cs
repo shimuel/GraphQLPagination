@@ -12,14 +12,14 @@ namespace BasicAuthGraphQL.PubRepo
 
         private int _id = 3;
 
-        public IEnumerable<Author> Authors
+        public Task<IEnumerable<Author>> AuthorsAsync
         {
             get
             {
                 IEnumerable<Author> authors;
                 lock (_authors)
                     authors = _authors.ToList();
-                return authors;
+                return Task.FromResult(authors);
             }
         }
 
@@ -34,15 +34,15 @@ namespace BasicAuthGraphQL.PubRepo
             }
         }
 
-        public Author Add(string name)
+        public Task<Author> AddAsync(string name)
         {
             var author = new Author(){Id= Interlocked.Increment(ref _id), Name = name};
             lock (_authors)
                 _authors.Add(author);
-            return author;
+            return Task.FromResult(author);
         }
 
-        public Author? Remove(int id)
+        public Task<Author?> RemoveAsync(int id)
         {
             Author? author = null;
             lock (_authors)
@@ -57,7 +57,24 @@ namespace BasicAuthGraphQL.PubRepo
                     }
                 }
             }
-            return author;
+            return Task.FromResult(author);
+        }
+
+        public Task<Author?> GetAuthorAsync(int id)
+        {
+            Author? author = null;
+            lock (_authors)
+            {
+                for (int i = 0; i < _authors.Count; i++)
+                {
+                    if (_authors[i].Id == id)
+                    {
+                       author = _authors[i];
+                       break;
+                    }
+                }
+            }
+            return Task.FromResult(author);
         }
 
         public IObservable<Author> AuthorObservable()

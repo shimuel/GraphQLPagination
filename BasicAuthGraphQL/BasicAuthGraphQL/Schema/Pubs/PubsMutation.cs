@@ -13,17 +13,17 @@ namespace BasicAuthGraphQL.Schema.Pubs
         public PubsMutation([FromServices] AuthorRepo authorRepo, BookRepo bookRepo)
         {
             Name = "PubsMutation";
-            Field<AuthorType>(
+            FieldAsync<AuthorType>(
                     "addAuthor",
                     arguments: new QueryArguments(
                         new QueryArgument<NonNullGraphType<AuthorInputType>> { Name = "author" }
                     ),
-                    resolve: context =>
+                    resolve: async context =>
                     {
                         var author = context.GetArgument<Author>("author");
                         var x = author.Name;
                         var y = author.Id;
-                        var newAuthor =  authorRepo.Add(author.Name);
+                        var newAuthor =  await authorRepo.AddAsync(author.Name);
                         //foreach (var bk in author.Books)
                         //{
                         //   var newBook = bookRepo.Add(bk.Name);
@@ -34,15 +34,15 @@ namespace BasicAuthGraphQL.Schema.Pubs
                     })
                 .AuthorizeWithPolicy(Constants.POLICY_UPDATE);
             ;
-            Field<BookType>(
+            FieldAsync<BookType>(
                     "addBook",
                     arguments: new QueryArguments(
                         new QueryArgument<NonNullGraphType<BookInputType>> { Name = "book" }
                     ),
-                    resolve: context =>
+                    resolve: async context =>
                     {
                         var book = context.GetArgument<Book>("book");
-                        return bookRepo.Add(book.Name);
+                        return bookRepo.AddAsync(book.Name);
                     })
                 .AuthorizeWithPolicy(Constants.POLICY_UPDATE);
             ;
