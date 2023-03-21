@@ -1,5 +1,4 @@
 ﻿using GraphQL.Types;
-using System.Xml.Linq;
 
 namespace BasicAuthGraphQL.Schema.Pubs
 {
@@ -10,7 +9,8 @@ namespace BasicAuthGraphQL.Schema.Pubs
             Name = "AuthorInput";
             Field<NonNullGraphType<IntGraphType>>("Id");
             Field<NonNullGraphType<StringGraphType>>("Name");
-            //Field<InputObjectGraphType<ListGraphType<BookInputType>>("AuthorBooks");
+            Field<ListGraphType<BookInputType>>("Books");
+            //Field(a => a.Books, type: typeof(ListGraphType<BookInputType>), nullable: true);
         }
     }
 }

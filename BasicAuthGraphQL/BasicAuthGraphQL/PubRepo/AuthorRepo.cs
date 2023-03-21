@@ -10,17 +10,24 @@ namespace BasicAuthGraphQL.PubRepo
 
         public AuthorRepo(BookRepo bookRepo)
         {
-            Author a = new Author() { Id = Interlocked.Increment(ref _id), Name = "Alex", Books = new List<Book>() };
-            a.Books.Add(new Book(){Id = $"ISBN{Interlocked.Increment(ref _id)}", Name = "Hardy Boys", AuthorId = a.Id, Author = a});
+            Author author1 = new Author()
+                { Id = Interlocked.Increment(ref _id), Name = "Alex", Books = new List<Book>() };
+            Author author2 = new Author()
+                { Id = Interlocked.Increment(ref _id), Name = "Alex", Books = new List<Book>() };
 
-            Author b = new Author() { Id = Interlocked.Increment(ref _id), Name = "Alex", Books = new List<Book>() };
-            b.Books.Add(new Book() { Id = $"ISBN{Interlocked.Increment(ref _id)}", Name = "Nancy Drew", AuthorId = b.Id, Author = b });
+            _authors.Add(author1);
+            _authors.Add(author2);
 
-            _authors.Add(a);
-            _authors.Add(b);
-
-            a.Books.ForEach(bk => bookRepo.AddBookAsync(bk));
-            b.Books.ForEach(bk => bookRepo.AddBookAsync(bk));
+            author1.Books.ForEach(bk =>
+            {
+                var book = bookRepo.AddBookAsync(bookName: "Hardy Boys", author1).Result;
+                author1.Books.Add(book);
+            });
+            author2.Books.ForEach(bk =>
+            {
+                var book = bookRepo.AddBookAsync(bookName: "Nancy Drew", author2).Result;
+                author2.Books.Add(book);
+            });
         }
 
         public Task<IEnumerable<Author>> AuthorsAsync
@@ -28,8 +35,7 @@ namespace BasicAuthGraphQL.PubRepo
             get
             {
                 IEnumerable<Author> authors;
-                lock (_authors)
-                    authors = _authors.ToList();
+                authors = _authors.ToList();
                 return Task.FromResult(authors);
             }
         }
@@ -39,33 +45,35 @@ namespace BasicAuthGraphQL.PubRepo
             get
             {
                 Author? author = null;
-                lock (_authors)
-                    author = _authors.FirstOrDefault(c => c.Id == id);
+                author = _authors.FirstOrDefault(c => c.Id == id);
                 return author;
             }
         }
 
         public Task<Author> AddAsync(string name)
         {
-            var author = new Author(){Id= Interlocked.Increment(ref _id), Name = name};
+            var author = new Author(){Id= Interlocked.Increment(ref _id), Name = name, Books = new List<Book>()};
             lock (_authors)
+            {
                 _authors.Add(author);
+            }
             return Task.FromResult(author);
         }
 
         public Task<Author?> RemoveAsync(int id)
         {
             Author? author = null;
-            lock (_authors)
+            for (int i = 0; i < _authors.Count; i++)
             {
-                for (int i = 0; i < _authors.Count; i++)
+                if (_authors[i].Id == id)
                 {
-                    if (_authors[i].Id == id)
+                    author = _authors[i];
+                    lock (_authors)
                     {
-                        author = _authors[i];
                         _authors.RemoveAt(i);
-                        break;
                     }
+
+                    break;
                 }
             }
             return Task.FromResult(author);

@@ -1,16 +1,14 @@
 ﻿using GraphQL.Types;
-using System.Xml.Linq;
 using BasicAuthGraphQL.Domain;
 using BasicAuthGraphQL.Security;
 using GraphQL;
 using BasicAuthGraphQL.PubRepo;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BasicAuthGraphQL.Schema.Pubs
 {
     public class PubsMutation : ObjectGraphType
     {
-        public PubsMutation([FromServices] AuthorRepo authorRepo, BookRepo bookRepo)
+        public PubsMutation([FromServices] AuthorRepo authorRepo, BookRepo bookRepo, ILogger<PubsMutation> logger)
         {
             Name = "PubsMutation";
             FieldAsync<AuthorType>(
@@ -20,20 +18,19 @@ namespace BasicAuthGraphQL.Schema.Pubs
                     ),
                     resolve: async context =>
                     {
-                        var author = context.GetArgument<Author>("author");
-                        var x = author.Name;
-                        var y = author.Id;
-                        var newAuthor =  await authorRepo.AddAsync(author.Name);
-                        //foreach (var bk in author.Books)
-                        //{
-                        //   var newBook = bookRepo.Add(bk.Name);
-                        //    newAuthor.Books.Add(newBook);
-                        //    newBook.Author = newAuthor;
-                        //}
+                        var authorArg = context.GetArgument<Author>("author");
+                        var newAuthor = await authorRepo.AddAsync(authorArg.Name);
+
+                        foreach (var bk in authorArg.Books)
+                        {
+                            var newBook = await bookRepo.AddBookAsync(bk.Name, newAuthor);
+                            newAuthor.Books.Add(newBook);
+                        }
+
                         return newAuthor;
                     })
                 .AuthorizeWithPolicy(Constants.POLICY_UPDATE);
-            ;
+
             FieldAsync<BookType>(
                     "addBook",
                     arguments: new QueryArguments(
@@ -42,10 +39,16 @@ namespace BasicAuthGraphQL.Schema.Pubs
                     resolve: async context =>
                     {
                         var book = context.GetArgument<Book>("book");
-                        return bookRepo.AddAsync(book.Name);
+                        var author = await authorRepo.GetAuthorAsync(book.AuthorId);
+                        if (author != null)
+                        {
+                            var newBook = await bookRepo.AddBookAsync(book.Name, author);
+                            return newBook;
+                        }
+
+                        throw new ArgumentException("Provide a valid AuthorId");
                     })
                 .AuthorizeWithPolicy(Constants.POLICY_UPDATE);
-            ;
         }
     }
 }

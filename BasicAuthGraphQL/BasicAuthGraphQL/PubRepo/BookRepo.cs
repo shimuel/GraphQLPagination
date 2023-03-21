@@ -1,16 +1,10 @@
 ﻿using System.Reactive.Linq;
 using BasicAuthGraphQL.Domain;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace BasicAuthGraphQL.PubRepo
 {
     public class BookRepo
     {
-        //private readonly List<Book> _books = new() {
-        //    new Book() { Id = "ISBN1", Name = "Book1", AuthorId = 1},
-        //    new Book() { Id ="ISBN2", Name = "Book2" , AuthorId = 1},
-        //    new Book() { Id ="ISBN3", Name = "Book3", AuthorId = 2 }
-        //};
         private readonly List<Book> _books = new();
         private int _id = 3;
 
@@ -36,21 +30,13 @@ namespace BasicAuthGraphQL.PubRepo
             }
         }
 
-        public Task<Book> AddAsync(string name)
-        {
-            var newId = $"ISBN{Interlocked.Increment(ref _id)}";
-            var book = new Book() { Id = newId , Name = name};
-            lock (_books)
-                _books.Add(book);
-            return Task.FromResult(book);
-        }
-
-        public Task AddBookAsync(Book book)
+        public Task<Book> AddBookAsync(string bookName, Author author)
         {
             lock (_books)
             {
-                _books.Add(book);
-                return Task.FromResult(book);
+                var id = $"ISBN{Interlocked.Increment(ref _id)}";
+                _books.Add(new Book() { Id = id, Name = bookName, AuthorId = author.Id, Author = author });
+                return GetBookAsync(id);
             }
         }
 

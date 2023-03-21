@@ -1,26 +1,57 @@
 
-Mutation
------
+Mutation - AuthorInput
+----------------------
 mutation PubsMutation($author: AuthorInput!){
     addAuthor(author:$author){
         id
         name
+    		books{
+          id
+          name
+        }
     }
 }
 
-
 variables
---------
+---------
 {
-  "author" : {
-  	"id":3,
-  	"name":"tem"
-	}
+    "author": {
+        "id": 3,
+        "name": "tem",
+        "books": [
+          {
+            "id": "5",
+            "name": "haaamdfgfd"
+          }
+        ]
+    }
 }
 
+Mutation - BookInput
+---------------------
+mutation PubsMutation($book: BookInput!){
+    addBook(book:$book){
+        id
+        name
+    		author{
+          id
+          name
+        }
+    }
+}
+
+variables
+---------
+{
+    "book": {
+        "id": "3",
+        "name": "tem",
+        "authorId": 4
+    }
+}
 
 Query Authors - id
-----------
+------------------
 {
   authorById(id:1){
     id

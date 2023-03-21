@@ -7,8 +7,9 @@ namespace BasicAuthGraphQL.Schema.Pubs
         public BookInputType()
         {
             Name = "BookInput";
-            Field<NonNullGraphType<StringGraphType>>("Id");
+            Field<StringGraphType>("Id");
             Field<NonNullGraphType<StringGraphType>>("Name");
+            Field<IntGraphType>("AuthorId");
         }
     }
 }
