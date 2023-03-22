@@ -55,7 +55,9 @@ builder.Services.AddGraphQL(graphqlBuilder => graphqlBuilder
     .AddErrorInfoProvider(options => options.ExposeExceptionStackTrace = builder.Environment.IsDevelopment())
     .AddGraphTypes(Assembly.GetExecutingAssembly())
     .AddSystemTextJson()
-    .AddAuthorizationRule() //triggers Authorization
+    .AddAuthorizationRule() //triggers Authorization -- You may also use .AllowAnonymous() and/or [AllowAnonymous] to allow specific fields to be returned to unauthenticated users within an graph that has an authorization requirement defined.
+                            // Note that authorization rules are ignored for input types and fields of input types 
+    //.AddWebSocketAuthentication<MyAuthService>()
     .AddUserContextBuilder(httpContext =>
     {
         return new GraphQLUserContext(httpContext);
@@ -82,13 +84,23 @@ if (app.Environment.IsDevelopment())
 app.UseWebSockets();
 app.UseRouting();
 app.UseCors();
+
+// when the GraphQL endpoint is used in server-to-server communications — but if you wish to ignore these exceptions, 
+// app.UseIgnoreDisconnections();
+
 //For Basic Authentication
 app.UseAuthentication();
-app.UseAuthorization(); /*Must go between UseRouting and UseEndpoints*/
+app.UseAuthorization(); /*Must go between UseRouting and UseEndpoints and for GraphQL AddAuthorizationRule + AuthorizationValidationRule + RequirementAuthorizationHandler */
 
-//app.UseGraphQL<MyMiddleware<ISchema>>("/ui/playground", new GraphQLHttpMiddlewareOptions());
-//app.UseGraphQL<ISchema>();
-app.UseGraphQL<GraphQLHttpMiddlewareWithLogs<ISchema>>("/graphql", new GraphQLHttpMiddlewareOptions() {});
+//GraphQL specific
+//Multi-schema configuration
+//app.UseGraphQL<DogSchema>("/dogs/graphql");
+//app.UseGraphQL<CatSchema>("/cats/graphql");
+//Be sure to derive from GraphQLHttpMiddleware<TSchema> rather than GraphQLHttpMiddleware as shown above for multi-schema compatibility.
+app.UseGraphQL<GraphQLHttpMiddlewareWithLogs<ISchema>>("/graphql", new GraphQLHttpMiddlewareOptions()
+{
+    //Lots of schema specific settings - GraphQLHttpMiddlewareOptions + GraphQLWebSocketOptions @https://github.com/graphql-dotnet/server 
+});
 app.UseGraphQLPlayground("/ui/playground",
     new GraphQL.Server.Ui.Playground.PlaygroundOptions
     {
@@ -99,6 +111,7 @@ app.UseGraphQLPlayground("/ui/playground",
 
 app.UseHttpsRedirection();
 
+// to setup requirement claim(s) based access
 app.MapGet("/login", [Microsoft.AspNetCore.Authorization.Authorize] () => true).WithName("login");
 
 app.UseEndpoints(endpoints =>

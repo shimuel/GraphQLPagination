@@ -119,7 +119,20 @@ all books
   }
 }
 
+
+Subscription
+------------
+subscription {
+  newMessages {
+    id
+    message
+    from
+    sent
+  }
+}
+
 public static string GetClaimValue(this ClaimsPrincipal claimsPrincipal, string claimType)
         {
             return claimsPrincipal.Claims.Single(c => c.Type == claimType).Value;
         }
+

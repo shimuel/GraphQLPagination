@@ -6,6 +6,10 @@ using System.Diagnostics;
 
 namespace BasicAuthGraphQL
 {
+    /// <summary>
+    /// GraphQLHttpMiddleware @ https://github.com/graphql-dotnet/server
+    /// </summary>
+    /// <typeparam name="TSchema">Be sure to derive from GraphQLHttpMiddleware<TSchema> rather than GraphQLHttpMiddleware as shown above for multi-schema compatibility.</typeparam>
     public class GraphQLHttpMiddlewareWithLogs<TSchema> : GraphQLHttpMiddleware<TSchema>
         where TSchema : ISchema
     {

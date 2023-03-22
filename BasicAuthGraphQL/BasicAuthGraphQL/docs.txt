@@ -1,0 +1,3 @@
+Please note that authorization rules do not apply to values returned within introspection requests, potentially leaking information about protected areas of the schema to unauthenticated users. You may use the ISchemaFilter to restrict what information is returned from introspection requests, but it will apply to both authenticated and unauthenticated users alike.
+
+Introspection requests are allowed unless the schema has an authorization requirement set on it. The @skip and @include directives are honored, skipping authorization checks for fields or fragments skipped by @skip or @include.
