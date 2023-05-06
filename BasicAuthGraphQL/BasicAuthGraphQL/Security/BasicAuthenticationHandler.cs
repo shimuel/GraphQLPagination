@@ -32,7 +32,8 @@ namespace BasicAuthGraphQL.Security
                     var claims = new[]
                     {
                         new Claim("name", credentials[0]),
-                        new Claim(Constants.CLAIM_PERMISSIONS, $"{Constants.POLICY_READ},{Constants.POLICY_UPDATE},{Constants.POLICY_UI}")
+                        new Claim(Constants.CLAIM_PERMISSIONS, $"{Constants.POLICY_READ},{Constants.POLICY_UPDATE},{Constants.POLICY_UI}") 
+                        //USED IN PubsQuery.cs (.AuthorizeWithPolicy(Constants.POLICY_READ)) AND RequirementAuthorizationHandler.cs
                         //new Claim(Constants.CLAIM_PERMISSIONS, $"{Constants.POLICY_READ},{Constants.POLICY_UI}")
                     };
                     var identity = new ClaimsIdentity(claims, "Basic");
@@ -41,16 +42,19 @@ namespace BasicAuthGraphQL.Security
                         AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name)));
                 }
 
-                Response.StatusCode = 401;
-                Response.Headers.Add("WWW-Authenticate", "Basic realm=\"dotnetthoughts.net\"");
-                return Task.FromResult(AuthenticateResult.Fail("Invalid Authorization Header"));
+                return NotAuthorized();
             }
             else
             {
-                Response.StatusCode = 401;
-                Response.Headers.Add("WWW-Authenticate", "Basic realm=\"dotnetthoughts.net\"");
-                return Task.FromResult(AuthenticateResult.Fail("Invalid Authorization Header"));
+                return NotAuthorized();
             }
+        }
+
+        private Task<AuthenticateResult> NotAuthorized()
+        {
+            Response.StatusCode = 401;
+            Response.Headers.Add("WWW-Authenticate", "Basic realm=\"dotnetthoughts.net\"");
+            return Task.FromResult(AuthenticateResult.Fail("Invalid Authorization Header"));
         }
     }
 }
