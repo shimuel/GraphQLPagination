@@ -24,9 +24,7 @@ namespace BasicAuthGraphQL.Security
         public const string POLICY_READ = "read";
         public const string POLICY_UPDATE = "update";
         public const string POLICY_UI = "ui";
-        public const string POLICY_READ2 = "read2";
         public const string CLAIM_PERMISSIONS = "permissions";
-        
     }
 
     //public class SecurityPolicy

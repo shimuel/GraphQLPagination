@@ -28,6 +28,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddSingleton<AuthorRepo>();
 builder.Services.AddSingleton<BookRepo>();
+builder.Services.AddSingleton< ISubscriptionService>(new SubscriptionService());
 
 builder.Services.AddAuthorization(options =>
 {

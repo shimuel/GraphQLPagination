@@ -16,12 +16,16 @@ variables
 ---------
 {
     "author": {
-        "id": 3,
-        "name": "tem",
+        "id": 4,
+        "name": "tem4",
         "books": [
           {
-            "id": "5",
-            "name": "haaamdfgfd"
+            "id": "55",
+            "name": "haaamdfgfd4"
+          },
+          {
+             "id": "57",
+            "name": "sdfsd57"
           }
         ]
     }
@@ -122,12 +126,12 @@ all books
 
 Subscription
 ------------
-subscription {
-  newMessages {
+subscription{
+	 subscriptionMessage{
     id
-    message
-    from
-    sent
+    MessageType
+    data
+    at
   }
 }
 

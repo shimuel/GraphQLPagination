@@ -1,5 +1,4 @@
-﻿using System.Reactive.Linq;
-using BasicAuthGraphQL.Domain;
+﻿using BasicAuthGraphQL.Domain;
 
 namespace BasicAuthGraphQL.PubRepo
 {
@@ -95,8 +94,5 @@ namespace BasicAuthGraphQL.PubRepo
             }
             return Task.FromResult(author);
         }
-
-        public IObservable<Author> AuthorObservable()
-            => _authors.ToObservable();
     }
 }

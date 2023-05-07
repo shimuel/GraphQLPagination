@@ -1,5 +1,4 @@
-﻿using System.Reactive.Linq;
-using BasicAuthGraphQL.Domain;
+﻿using BasicAuthGraphQL.Domain;
 
 namespace BasicAuthGraphQL.PubRepo
 {
@@ -89,8 +88,5 @@ namespace BasicAuthGraphQL.PubRepo
             }
             return Task.FromResult(book);
         }
-
-        public IObservable<Book> BooksObservable()
-            => _books.ToObservable();
     }
 }

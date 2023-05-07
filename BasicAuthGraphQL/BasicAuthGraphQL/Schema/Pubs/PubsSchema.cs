@@ -1,4 +1,7 @@
 ﻿using GraphQL.Instrumentation;
+using GraphQL.Types;
+using System;
+using System.Reactive;
 
 namespace BasicAuthGraphQL.Schema.Pubs
 {
@@ -11,8 +14,7 @@ namespace BasicAuthGraphQL.Schema.Pubs
             //Mutation = (PubsMutation)serviceProvider.GetService(typeof(PubsMutation)) ?? throw new InvalidOperationException();
             Query = serviceProvider.GetService<PubsQuery>()!;
             Mutation = serviceProvider.GetService<PubsMutation>()!;
-            //Subscription = serviceProvider.GetService<PubsSubscription>()!;
-            Description = "PubsSchema";
+            Subscription = serviceProvider.GetService<PubsSubscription>();
             FieldMiddleware.Use(new InstrumentFieldsMiddleware());
         }
 

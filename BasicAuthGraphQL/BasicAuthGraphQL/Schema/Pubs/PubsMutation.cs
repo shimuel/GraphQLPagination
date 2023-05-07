@@ -3,12 +3,18 @@ using BasicAuthGraphQL.Domain;
 using BasicAuthGraphQL.Security;
 using GraphQL;
 using BasicAuthGraphQL.PubRepo;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BasicAuthGraphQL.Schema.Pubs
 {
     public class PubsMutation : ObjectGraphType
     {
-        public PubsMutation([FromServices] AuthorRepo authorRepo, BookRepo bookRepo, ILogger<PubsMutation> logger)
+        public PubsMutation(
+            [FromServices] AuthorRepo authorRepo, 
+            BookRepo bookRepo,
+            ISubscriptionService subscriptionService,
+            ILogger<PubsMutation> logger)
         {
             Name = "PubsMutation";
             FieldAsync<AuthorType>(
@@ -25,6 +31,17 @@ namespace BasicAuthGraphQL.Schema.Pubs
                         {
                             var newBook = await bookRepo.AddBookAsync(bk.Name, newAuthor);
                             newAuthor.Books.Add(newBook);
+                            //subscriptionService.Notify(new SubscriptionEventData(){Id = bk.Id, MessageType = MessageType.AuthorAdded, Data = bk.Name ,At = DateTime.Now});
+                            subscriptionService.Notify(new SubscriptionEventData()
+                            {
+                                Id = Guid.NewGuid().ToString(), MessageType = MessageType.BookAdded, Data = JsonSerializer.Serialize<Book>(bk,new JsonSerializerOptions()
+                                {
+                                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                                    MaxDepth = 5,
+                                    WriteIndented = true
+                                }),
+                                At = DateTime.Now
+                            });
                         }
 
                         return newAuthor;
@@ -43,6 +60,19 @@ namespace BasicAuthGraphQL.Schema.Pubs
                         if (author != null)
                         {
                             var newBook = await bookRepo.AddBookAsync(book.Name, author);
+                            //subscriptionService.Notify(new SubscriptionEventData() { Id = author.Id.ToString(), MessageType = MessageType.BookAdded, Data = author.Name, At = DateTime.Now });
+                            subscriptionService.Notify(new SubscriptionEventData()
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                MessageType = MessageType.AuthorAdded,
+                                Data = JsonSerializer.Serialize<Author>(author, new JsonSerializerOptions()
+                                {
+                                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                                    MaxDepth = 5,
+                                    WriteIndented = true
+                                }),
+                                At = DateTime.Now
+                            });
                             return newBook;
                         }
 
