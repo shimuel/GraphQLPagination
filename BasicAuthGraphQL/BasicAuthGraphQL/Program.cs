@@ -103,6 +103,8 @@ app.UseAuthorization(); /*Must go between UseRouting and UseEndpoints and for Gr
 app.UseGraphQL<GraphQLHttpMiddlewareWithLogs<ISchema>>("/graphql", new GraphQLHttpMiddlewareOptions()
 {
     //Lots of schema specific settings - GraphQLHttpMiddlewareOptions + GraphQLWebSocketOptions @https://github.com/graphql-dotnet/server 
+    AuthorizationRequired = true, //trigger authentication b4 schema loading while navigating to /ui/playground
+    //AuthorizedPolicy = Constants.POLICY_UI,
 });
 app.UseGraphQLPlayground("/ui/playground",
     new GraphQL.Server.Ui.Playground.PlaygroundOptions
@@ -121,7 +123,7 @@ app.UseEndpoints(endpoints =>
 {
     // configure the graphql endpoint at "/graphql"
     endpoints.MapGraphQL("/graphql")
-        .RequireCors("MyCorsPolicy");
+        .RequireCors("MyCorsPolicy").RequireAuthorization(policyNames: Constants.POLICY_UI);
     // configure Playground at "/"
     //endpoints.MapGraphQLPlayground("/ui/playground");
 });
