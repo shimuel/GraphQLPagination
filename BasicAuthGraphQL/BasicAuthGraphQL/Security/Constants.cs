@@ -19,10 +19,16 @@ namespace BasicAuthGraphQL.Security
         public string Access => Constants.POLICY_UI;
     }
 
+    public class SubscribeRequirement : IAuthorizationRequirement
+    {
+        public string Access => Constants.POLICY_SUBSCRIBE;
+    }
+
     public class Constants
     {
         public const string POLICY_READ = "read";
         public const string POLICY_UPDATE = "update";
+        public const string POLICY_SUBSCRIBE = "subscribe";
         public const string POLICY_UI = "ui";
         public const string CLAIM_PERMISSIONS = "permissions";
     }

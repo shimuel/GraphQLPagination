@@ -38,17 +38,22 @@ namespace BasicAuthGraphQL
                     {
                         case UIRequirement uiRequirement:
                             errorMessage.AppendLine();
-                            errorMessage.Append($"no ui --> Access denied  ");
+                            errorMessage.Append($"no ui Access --> request denied !!!");
                             errorMessage.AppendLine();
                             break;
                         case ReadRequirement readRequirement:
                             errorMessage.AppendLine();
-                            errorMessage.Append($"no read --> Access denied  ");
+                            errorMessage.Append($"no read Access --> request denied !!!");
                             errorMessage.AppendLine();
                             break;
                         case WriteRequirement updateRequirement:
                             errorMessage.AppendLine();
-                            errorMessage.Append($"no write -->  denied  ");
+                            errorMessage.Append($"no write Access --> request denied !!!");
+                            errorMessage.AppendLine();
+                            break;
+                        case SubscribeRequirement subscribeRequirement:
+                            errorMessage.AppendLine();
+                            errorMessage.Append($"no subscription Access --> request denied !!!");
                             errorMessage.AppendLine();
                             break;
                     }

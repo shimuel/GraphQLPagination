@@ -39,6 +39,8 @@ builder.Services.AddAuthorization(options =>
         policy.Requirements.Add(new WriteRequirement()));
     options.AddPolicy(Constants.POLICY_UI, policy =>
         policy.Requirements.Add(new UIRequirement()));
+    options.AddPolicy(Constants.POLICY_SUBSCRIBE, policy =>
+        policy.Requirements.Add(new SubscribeRequirement()));
 });
 
 //For Basic Authentication /Authorization

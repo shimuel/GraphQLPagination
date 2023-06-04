@@ -32,7 +32,9 @@ namespace BasicAuthGraphQL.Security
                     var claims = new[]
                     {
                         new Claim("name", credentials[0]),
-                        new Claim(Constants.CLAIM_PERMISSIONS, $"{Constants.POLICY_READ},{Constants.POLICY_UPDATE},{Constants.POLICY_UI}") 
+                        new Claim(
+                            Constants.CLAIM_PERMISSIONS, 
+                            $"{Constants.POLICY_READ},{Constants.POLICY_UPDATE},{Constants.POLICY_UI},{Constants.POLICY_SUBSCRIBE}") 
                         //USED IN PubsQuery.cs (.AuthorizeWithPolicy(Constants.POLICY_READ)) AND RequirementAuthorizationHandler.cs
                         //new Claim(Constants.CLAIM_PERMISSIONS, $"{Constants.POLICY_READ},{Constants.POLICY_UI}")
                     };

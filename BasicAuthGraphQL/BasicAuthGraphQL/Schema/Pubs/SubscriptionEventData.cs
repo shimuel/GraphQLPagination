@@ -1,7 +1,8 @@
 ﻿﻿using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using GraphQL;
+ using BasicAuthGraphQL.Security;
+ using GraphQL;
 using GraphQL.Types;
 
 namespace BasicAuthGraphQL.Schema.Pubs
@@ -23,7 +24,7 @@ namespace BasicAuthGraphQL.Schema.Pubs
         {
             Field(o => o.Id);
             Field(o => o.MessageType);
-            Field(o => o.Data);
+            Field(o => o.Data).AuthorizeWithPolicy(Constants.POLICY_SUBSCRIBE);
             Field(o => o.At);
            
         }

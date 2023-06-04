@@ -36,6 +36,13 @@ namespace BasicAuthGraphQL.Security
                         context.Succeed(requirement);
                     }
                 }
+                else if (requirement is SubscribeRequirement)
+                {
+                    if (HasAccess(context.User, context.Resource, Constants.POLICY_SUBSCRIBE, permissions))
+                    {
+                        context.Succeed(requirement);
+                    }
+                }
                 else if (requirement is UIRequirement )
                 {
                     if (HasAccess(context.User, context.Resource, Constants.POLICY_UI, permissions))
@@ -48,9 +55,9 @@ namespace BasicAuthGraphQL.Security
             return Task.CompletedTask;
         }
 
-        private static bool HasAccess(ClaimsPrincipal user, object? resource, string perm, List<string> permissions)
+        private static bool HasAccess(ClaimsPrincipal user, object? resource, string requiredPermission, List<string> permissions)
         {
-            return permissions.Contains(perm);
+            return permissions.Contains(requiredPermission.Trim());
         }
 
     }
