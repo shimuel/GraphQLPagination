@@ -29,12 +29,12 @@ namespace BasicAuthGraphQL.PubRepo
             }
         }
 
-        public Task<Book> AddBookAsync(string bookName, Author author)
+        public Task<Book> AddBookAsync(string bookName, string genre, bool published, Author author)
         {
             lock (_books)
             {
                 var id = $"ISBN{Interlocked.Increment(ref _id)}";
-                _books.Add(new Book() { Id = id, Name = bookName, AuthorId = author.Id, Author = author });
+                _books.Add(new Book() { Id = id, Name = bookName, AuthorId = author.Id, Published = published, Author = author });
                 return GetBookAsync(id);
             }
         }

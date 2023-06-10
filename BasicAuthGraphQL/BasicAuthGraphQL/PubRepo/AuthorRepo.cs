@@ -9,24 +9,7 @@ namespace BasicAuthGraphQL.PubRepo
 
         public AuthorRepo(BookRepo bookRepo)
         {
-            Author author1 = new Author()
-                { Id = Interlocked.Increment(ref _id), Name = "Alex", Books = new List<Book>() };
-            Author author2 = new Author()
-                { Id = Interlocked.Increment(ref _id), Name = "Alex", Books = new List<Book>() };
-
-            _authors.Add(author1);
-            _authors.Add(author2);
-
-            author1.Books.ForEach(bk =>
-            {
-                var book = bookRepo.AddBookAsync(bookName: "Hardy Boys", author1).Result;
-                author1.Books.Add(book);
-            });
-            author2.Books.ForEach(bk =>
-            {
-                var book = bookRepo.AddBookAsync(bookName: "Nancy Drew", author2).Result;
-                author2.Books.Add(book);
-            });
+          GenerateAuthors(bookRepo);
         }
 
         public Task<IEnumerable<Author>> AuthorsAsync
@@ -93,6 +76,24 @@ namespace BasicAuthGraphQL.PubRepo
                 }
             }
             return Task.FromResult(author);
+        }
+
+
+        public void GenerateAuthors(BookRepo bookRepo)
+        {
+            Author? author = null;
+            lock (_authors)
+            {
+                for (int i = 1; i < 4; i++)
+                {
+                    Author author1 = new Author() { Id = Interlocked.Increment(ref _id), Name = $"Alex {i}", Books = new List<Book>() };
+                    for (int j = 1; j < 5; j++)
+                    {
+                        bookRepo.AddBookAsync(bookName: $"Alex's book {j}", genre: "", true, author1);
+                    }
+                    _authors.Add(author1);
+                }
+            }
         }
     }
 }

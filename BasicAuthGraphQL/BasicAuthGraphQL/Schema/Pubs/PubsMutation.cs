@@ -29,7 +29,7 @@ namespace BasicAuthGraphQL.Schema.Pubs
 
                         foreach (var bk in authorArg.Books)
                         {
-                            var newBook = await bookRepo.AddBookAsync(bk.Name, newAuthor);
+                            var newBook = await bookRepo.AddBookAsync(bk.Name, bk.Genre, bk.Published, newAuthor);
                             newAuthor.Books.Add(newBook);
                             //subscriptionService.Notify(new SubscriptionEventData(){Id = bk.Id, MessageType = MessageType.AuthorAdded, Data = bk.Name ,At = DateTime.Now});
                             subscriptionService.Notify(new SubscriptionEventData()
@@ -59,7 +59,7 @@ namespace BasicAuthGraphQL.Schema.Pubs
                         var author = await authorRepo.GetAuthorAsync(book.AuthorId);
                         if (author != null)
                         {
-                            var newBook = await bookRepo.AddBookAsync(book.Name, author);
+                            var newBook = await bookRepo.AddBookAsync(book.Name, book.Genre, book.Published, author);
                             //subscriptionService.Notify(new SubscriptionEventData() { Id = author.Id.ToString(), MessageType = MessageType.BookAdded, Data = author.Name, At = DateTime.Now });
                             subscriptionService.Notify(new SubscriptionEventData()
                             {

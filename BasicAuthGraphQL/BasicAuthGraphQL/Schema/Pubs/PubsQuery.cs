@@ -18,7 +18,8 @@ namespace BasicAuthGraphQL.Schema.Pubs
                 "Authors",
                 resolve: async context =>
                 {
-                    return await authorRepo.AuthorsAsync;
+                    var  auth = await authorRepo.AuthorsAsync;
+                    return auth;
                 }
             ).AuthorizeWithPolicy(Constants.POLICY_READ);
 

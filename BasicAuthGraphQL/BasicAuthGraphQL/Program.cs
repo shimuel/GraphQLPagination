@@ -10,7 +10,8 @@ using BasicAuthGraphQL.PubRepo;
 using GraphQL.Server.Transports.AspNetCore;
 using GraphQL.Types;
 using BasicAuthGraphQL.Schema.Pubs;
-using Microsoft.AspNetCore.Hosting;
+using GraphQL.Relay.Types;
+using GraphQL.Types.Relay;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,13 @@ builder.Services.AddCors(options =>
         corbuilder.WithOrigins("https://localhost:7266/");
     });
 });
+
+// Cursor paging
+//builder.Services.AddTransient(typeof(ConnectionType<>));
+//builder.Services.AddTransient(typeof(EdgeType<>));
+//builder.Services.AddTransient<NodeInterface>();
+//builder.Services.AddTransient<PageInfoType>();
+
 builder.Services.AddSingleton<AuthorRepo>();
 builder.Services.AddSingleton<BookRepo>();
 builder.Services.AddSingleton< ISubscriptionService>(new SubscriptionService());
