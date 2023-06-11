@@ -6,7 +6,7 @@ using GraphQL.Types;
 
 namespace BasicAuthGraphQL.Schema.Pubs
 {
-    public class BookType : NodeGraphType<Book>
+    public class BookType : AsyncNodeGraphType<Book>
     {
         private AuthorRepo _authorRepo;
         private BookRepo _bookRepo;
@@ -25,9 +25,9 @@ namespace BasicAuthGraphQL.Schema.Pubs
                     return author;
                 });
         }
-        public override Book GetById(IResolveFieldContext<object> context, string id)
+        public override Task<Book> GetById(IResolveFieldContext<object> context, string id)
         {
-            return _bookRepo.GetBookAsync(id).Result;
+            return _bookRepo.GetBookAsync(id);
         }
     }
 }
