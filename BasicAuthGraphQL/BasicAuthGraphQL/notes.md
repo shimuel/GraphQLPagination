@@ -135,6 +135,57 @@ subscription{
   }
 }
 
+
+authors Connections - 
+----------------------
+{
+  authors{
+   totalCount
+    pageInfo{
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    edges{
+      node{
+        id
+        authorId
+        name
+        books{
+          id
+          name
+        }
+      }
+    }
+  }
+}
+
+books Connections - 
+----------------------
+{
+  books{
+    totalCount
+   pageInfo{
+    hasNextPage
+    hasPreviousPage
+    startCursor
+    endCursor
+  }
+    edges{
+      node{
+        id
+        bookId
+        name
+        bookAuthor{
+          authorId
+          name
+        }
+      }
+    }
+  }
+}
+
 public static string GetClaimValue(this ClaimsPrincipal claimsPrincipal, string claimType)
         {
             return claimsPrincipal.Claims.Single(c => c.Type == claimType).Value;

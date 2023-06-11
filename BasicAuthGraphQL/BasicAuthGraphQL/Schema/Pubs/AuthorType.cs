@@ -12,7 +12,7 @@ namespace BasicAuthGraphQL.Schema.Pubs
         private BookRepo _bookRepo;
         public AuthorType(AuthorRepo authorRepo, BookRepo bookRepo)
         {
-            Name = "Author";
+            Name = "author";
             Id(bk => bk.Id);
             _authorRepo = authorRepo;
             _bookRepo = bookRepo;

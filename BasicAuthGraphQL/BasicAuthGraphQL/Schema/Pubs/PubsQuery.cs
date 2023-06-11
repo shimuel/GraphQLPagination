@@ -36,6 +36,14 @@ namespace BasicAuthGraphQL.Schema.Pubs
                     return context.ToConnection(authorRepo.AuthorsAsync.Result);
                 });
 
+            Connection<BookType>()
+                .Name("books")
+                .AuthorizeWithPolicy(Constants.POLICY_READ)
+                .Resolve(context =>
+                {
+                    return context.ToConnection(bookRepo.BooksAsync.Result);
+                });
+
             FieldAsync<BookType>(
                 "BookById",
                 arguments: new QueryArguments(new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "id" }),
