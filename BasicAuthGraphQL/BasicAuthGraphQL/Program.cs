@@ -29,10 +29,10 @@ builder.Services.AddCors(options =>
 });
 
 // Cursor paging
-//builder.Services.AddTransient(typeof(ConnectionType<>));
-//builder.Services.AddTransient(typeof(EdgeType<>));
-//builder.Services.AddTransient<NodeInterface>();
-//builder.Services.AddTransient<PageInfoType>();
+builder.Services.AddTransient(typeof(ConnectionType<>));
+builder.Services.AddTransient(typeof(EdgeType<>));
+builder.Services.AddTransient<NodeInterface>();
+builder.Services.AddTransient<PageInfoType>();
 
 builder.Services.AddSingleton<AuthorRepo>();
 builder.Services.AddSingleton<BookRepo>();

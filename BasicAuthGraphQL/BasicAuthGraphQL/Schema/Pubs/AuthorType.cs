@@ -1,21 +1,34 @@
 ﻿using BasicAuthGraphQL.Domain;
 using BasicAuthGraphQL.PubRepo;
+using GraphQL;
+using GraphQL.Relay.Types;
 using GraphQL.Types;
 
 namespace BasicAuthGraphQL.Schema.Pubs
 {
-    public class AuthorType : ObjectGraphType<Author>
+    public class AuthorType : NodeGraphType<Author>
     {
-        public AuthorType(BookRepo repo)
+        private AuthorRepo _authorRepo;
+        private BookRepo _bookRepo;
+        public AuthorType(AuthorRepo authorRepo, BookRepo bookRepo)
         {
-            Field(x => x.Id).Description("The Id of the Author.");
+            Name = "Author";
+            Id(bk => bk.Id);
+            _authorRepo = authorRepo;
+            _bookRepo = bookRepo;
+
             Field(x => x.Name).Description("The name of the Author.");
             FieldAsync<ListGraphType<BookType>>("books",
                 resolve: async context =>
                 {
-                    var booksByAuthor = await repo.GetBooksByAuthorAsync(context.Source.Id);
+                    var booksByAuthor = await bookRepo.GetBooksByAuthorAsync(context.Source.Id);
                     return booksByAuthor;
                 });
+        }
+
+        public override Author GetById(IResolveFieldContext<object> context, string id)
+        {
+            return _authorRepo.GetAuthorAsync(int.Parse(id)).Result;
         }
     }
 }

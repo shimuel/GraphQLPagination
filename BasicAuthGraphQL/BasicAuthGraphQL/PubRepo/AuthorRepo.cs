@@ -79,7 +79,7 @@ namespace BasicAuthGraphQL.PubRepo
         }
 
 
-        public void GenerateAuthors(BookRepo bookRepo)
+        private void GenerateAuthors(BookRepo bookRepo)
         {
             Author? author = null;
             lock (_authors)

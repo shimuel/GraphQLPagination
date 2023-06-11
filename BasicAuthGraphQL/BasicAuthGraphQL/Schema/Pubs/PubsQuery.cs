@@ -5,6 +5,7 @@ using BasicAuthGraphQL.Security;
 using GraphQL;
 using GraphQL.Types;
 using System.Security.Cryptography;
+using GraphQL.Relay.Utilities;
 
 namespace BasicAuthGraphQL.Schema.Pubs
 {
@@ -14,14 +15,6 @@ namespace BasicAuthGraphQL.Schema.Pubs
         {
             //this.AuthorizeWithPolicy(Constants.POLICY_READ2);
             Name = "PubsQuery";
-            FieldAsync<ListGraphType<AuthorType>>(
-                "Authors",
-                resolve: async context =>
-                {
-                    var  auth = await authorRepo.AuthorsAsync;
-                    return auth;
-                }
-            ).AuthorizeWithPolicy(Constants.POLICY_READ);
 
             FieldAsync<AuthorType>(
                 "authorById",
@@ -35,14 +28,13 @@ namespace BasicAuthGraphQL.Schema.Pubs
                 }
             ).AuthorizeWithPolicy(Constants.POLICY_READ);
 
-
-            FieldAsync<ListGraphType<BookType>>(
-                "Books",
-                resolve: async context =>
+            Connection<AuthorType>()
+                .Name("authors")
+                .AuthorizeWithPolicy(Constants.POLICY_READ)
+                .Resolve(context =>
                 {
-                    return await bookRepo.BooksAsync;
-                }
-            ).AuthorizeWithPolicy(Constants.POLICY_READ);
+                    return context.ToConnection(authorRepo.AuthorsAsync.Result);
+                });
 
             FieldAsync<BookType>(
                 "BookById",
