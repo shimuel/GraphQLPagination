@@ -1,13 +1,28 @@
 
 Mutation - AuthorInput
 ----------------------
-mutation PubsMutation($author: AuthorInput!){
-    addAuthor(author:$author){
-        id
-        name
-    		books{
-          id
-          name
+mutation pubsMutations($author: AuthorInput!){
+  authorMutate{
+     addAuthor(author:$author){
+            id
+            name
+            books{
+              id
+              name
+            }
+        }
+  }
+}
+
+mutation pubsMutations($author: AuthorInput!){
+  authorMutate{
+    updateAuthor(author:$author){
+            id
+            name
+            books{
+              id
+              name
+            }
         }
     }
 }
@@ -16,15 +31,15 @@ variables
 ---------
 {
     "author": {
-        "id": 4,
-        "name": "tem4",
+        "id": 101,
+        "name": "tem101",
         "books": [
           {
-            "id": "55",
+            "id": "101555",
             "name": "haaamdfgfd4"
           },
           {
-             "id": "57",
+             "id": "10157",
             "name": "sdfsd57"
           }
         ]
@@ -33,13 +48,15 @@ variables
 
 Mutation - BookInput
 ---------------------
-mutation PubsMutation($book: BookInput!){
-    addBook(book:$book){
-        id
-        name
-    		author{
-          id
-          name
+mutation pubsMutations($book: BookInput!){
+  bookMutate{
+     addBook(book:$book){
+            id
+            name
+            bookAuthor{
+              id
+              name
+            }
         }
     }
 }
@@ -57,31 +74,14 @@ variables
 Query Authors - id
 ------------------
 {
-  authorById(id:1){
-    id
-    name
-    books{
+  authorQuery{
+    getAuthor (id:2) {
       id
+      authorId
       name
-      author{
+      books{
         id
-        name
-      }
-    }
-  }
-}
-
-all authors
-----------
-{
-  authors{
-    id
-    name
-    books{
-      id
-      name
-      author{
-        id
+        bookId
         name
       }
     }
@@ -91,95 +91,78 @@ all authors
 Query Books - id
 ----------
 {
-  bookById(id:"1"){
-    id
-    name
-    author{
+  bookQuery{
+    bookById (id:"ISBN4") {
       id
       name
-      books {
-        author{
-          name
-        }
-      }
-    }
-  }
-}
-
-all books
-----------
-{
-  books{
-    id
-    name
-    author{
-      id
-      name
-      books{
+      bookAuthor{
         id
+        authorId
         name
       }
     }
   }
 }
 
-
 Subscription
 ------------
 subscription{
-	 subscriptionMessage{
+  subscriptionMessage{
     id
-    MessageType
+    messageType
     data
     at
   }
 }
 
-
 authors Connections - 
 ----------------------
 {
-  authors{
-   totalCount
-    pageInfo{
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
-    }
-    edges{
-      node{
-        id
-        authorId
-        name
-        books{
-          id
-          name
+  authorQuery{
+    searchAuthor{
+       totalCount
+        pageInfo{
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
+        edges{
+          node{
+            id
+            authorId
+            name
+            books{
+              id
+              name
+            }
+          }
         }
       }
     }
-  }
 }
 
 books Connections - 
 ----------------------
 {
-  books{
-    totalCount
-   pageInfo{
-    hasNextPage
-    hasPreviousPage
-    startCursor
-    endCursor
-  }
-    edges{
-      node{
-        id
-        bookId
-        name
-        bookAuthor{
-          authorId
+  bookQuery{
+    booksSearch{
+       totalCount
+       pageInfo{
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      edges{
+        node{
+          id
+          bookId
           name
+          bookAuthor{
+            authorId
+            name
+          }
         }
       }
     }

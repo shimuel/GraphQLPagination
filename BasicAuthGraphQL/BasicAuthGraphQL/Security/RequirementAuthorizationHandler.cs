@@ -10,16 +10,16 @@ namespace BasicAuthGraphQL.Security
             var pendingRequirements = context.PendingRequirements.ToList();
 
             //Filter specific claim    
-            var _ = (context.User.Claims?.FirstOrDefault(
+            var permissionClaim = (context.User.Claims?.FirstOrDefault(
                 x => x.Type.Equals(Constants.CLAIM_PERMISSIONS, StringComparison.OrdinalIgnoreCase))?.Value);
 
-            if (string.IsNullOrEmpty(_))
+            if (string.IsNullOrEmpty(permissionClaim))
             {
                 //context.Fail(new AuthorizationFailureReason(this,"Access denied !!!"));
                 return Task.CompletedTask;
             }
 
-            var permissions = _.Split(',').ToList();
+            var permissions = permissionClaim.Split(',').ToList();
             foreach (var requirement in pendingRequirements)
             {
                 if (requirement is ReadRequirement)

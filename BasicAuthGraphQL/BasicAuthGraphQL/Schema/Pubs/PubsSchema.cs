@@ -7,13 +7,14 @@ namespace BasicAuthGraphQL.Schema.Pubs
 {
     public class PubsSchema : GraphQL.Types.Schema
     {
+        //https://stackoverflow.com/questions/64729712/how-does-one-organize-more-than-a-few-mutations-in-graphql-net-graphtype-first
         public PubsSchema(IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
-            //Query = (PubsQuery)serviceProvider.GetService(typeof(PubsQuery)) ?? throw new InvalidOperationException();
-            //Mutation = (PubsMutation)serviceProvider.GetService(typeof(PubsMutation)) ?? throw new InvalidOperationException();
-            Query = serviceProvider.GetService<PubsQuery>()!;
-            Mutation = serviceProvider.GetService<PubsMutation>()!;
+            //Query = (PubsQueries)serviceProvider.GetService(typeof(PubsQueries)) ?? throw new InvalidOperationException();
+            //Mutation = (PubsMutations)serviceProvider.GetService(typeof(PubsMutations)) ?? throw new InvalidOperationException();
+            Query = serviceProvider.GetService<PubsQueries>()!;
+            Mutation = serviceProvider.GetService<PubsMutations>()!;
             Subscription = serviceProvider.GetService<PubsSubscription>();
             FieldMiddleware.Use(new InstrumentFieldsMiddleware());
         }

@@ -38,11 +38,21 @@ builder.Services.AddSingleton<AuthorRepo>();
 builder.Services.AddSingleton<BookRepo>();
 builder.Services.AddSingleton< ISubscriptionService>(new SubscriptionService());
 
+//GraphQL.NET: Authorization
+builder.Services
+    .AddTransient<IValidationRule, GraphQL.Server.Transports.AspNetCore.AuthorizationValidationRule>();
 builder.Services.AddAuthorization(options =>
 {
     //options.AddPolicy("PermissionPolicy", policy => policy.RequireClaim("Permissions", "read", "update"));
     options.AddPolicy(Constants.POLICY_READ, policy =>
-        policy.Requirements.Add(new ReadRequirement()));
+    {
+        policy.Requirements.Add(new ReadRequirement());
+        //policy.RequireAuthenticatedUser();
+        //policy.RequireAssertion(context => context.User.HasClaim(c =>
+        //{
+        //    return c.Type == Constants.CLAIM_PERMISSIONS;
+        //}));
+    });
     options.AddPolicy(Constants.POLICY_UPDATE, policy =>
         policy.Requirements.Add(new WriteRequirement()));
     options.AddPolicy(Constants.POLICY_UI, policy =>
@@ -50,16 +60,13 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(Constants.POLICY_SUBSCRIBE, policy =>
         policy.Requirements.Add(new SubscribeRequirement()));
 });
+builder.Services.AddSingleton<IAuthorizationHandler, RequirementAuthorizationHandler>();//Authorization handlers
 
-//For Basic Authentication /Authorization
-builder.Services.AddSingleton<IAuthorizationHandler, RequirementAuthorizationHandler>();
+//For Basic Authentication
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>
         ("BasicAuthentication", null);
 
-
-builder.Services
-    .AddTransient<IValidationRule, GraphQL.Server.Transports.AspNetCore.AuthorizationValidationRule>();
 
 builder.Services.AddGraphQL(graphqlBuilder => graphqlBuilder
     .AddSchema<PubsSchema>()
@@ -81,7 +88,7 @@ builder.Services.AddGraphQL(graphqlBuilder => graphqlBuilder
             return Task.CompletedTask;
         };
     })
-    .AddErrorInfoProvider<CustomErrorInfoProvider>());
+    .AddErrorInfoProvider<CustomErrorInfoProvider>());    /// Custom <see cref="ErrorInfoProvider"/> implementing a dedicated error message for the sample <see cref="IAuthorizationRequirement"/>
 
 var app = builder.Build();
 
@@ -101,7 +108,7 @@ app.UseCors();
 
 //For Basic Authentication
 app.UseAuthentication();
-app.UseAuthorization(); /*Must go between UseRouting and UseEndpoints and for GraphQL AddAuthorizationRule + AuthorizationValidationRule + RequirementAuthorizationHandler */
+app.UseAuthorization(); /*Must go between "UseRouting" and "UseEndpoints" and for GraphQL AddAuthorizationRule + AuthorizationValidationRule + RequirementAuthorizationHandler */
 
 //GraphQL specific
 //Multi-schema configuration

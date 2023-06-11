@@ -25,9 +25,9 @@ namespace BasicAuthGraphQL.Schema.Pubs
                     return author;
                 });
         }
-        public override Task<Book> GetById(IResolveFieldContext<object> context, string id)
+        public override async Task<Book> GetById(IResolveFieldContext<object> context, string id)
         {
-            return _bookRepo.GetBookAsync(id);
+            return await _bookRepo.GetBookAsync(id);
         }
     }
 }
