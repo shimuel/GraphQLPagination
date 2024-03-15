@@ -26,6 +26,7 @@ namespace BasicAuthGraphQL.Schema.Pubs
             Connection<BookType>()
                 .Name("booksSearch")
                 .AuthorizeWithPolicy(Constants.POLICY_READ)
+                .Bidirectional()
                 .Resolve(context =>
                 {
                     return context.ToConnection(bookRepo.BooksAsync.Result);

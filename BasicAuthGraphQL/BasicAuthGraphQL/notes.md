@@ -3,14 +3,15 @@ Mutation - AuthorInput
 ----------------------
 mutation pubsMutations($author: AuthorInput!){
   authorMutate{
-     addAuthor(author:$author){
-            id
-            name
-            books{
-              id
-              name
-            }
-        }
+    addAuthor(author:$author){
+      id
+      authorId
+      name
+      books{
+        id
+        name
+      }
+    }
   }
 }
 
@@ -31,7 +32,7 @@ variables
 ---------
 {
     "author": {
-        "id": 101,
+      	"id": 10157,
         "name": "tem101",
         "books": [
           {
@@ -119,7 +120,7 @@ authors Connections -
 ----------------------
 {
   authorQuery{
-    searchAuthor{
+    searchAuthor(last:3, before:/*pageInfo.cursor*/) {
        totalCount
         pageInfo{
           hasNextPage

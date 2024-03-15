@@ -14,6 +14,7 @@ namespace BasicAuthGraphQL.Schema.Pubs
             [FromServices] AuthorRepo authorRepo, 
             BookRepo bookRepo,
             ISubscriptionService subscriptionService,
+            IGraphQLTextSerializer serializer,
             ILogger<BookMutation> logger)
         {
             Name = "BookMutation";
@@ -33,8 +34,8 @@ namespace BasicAuthGraphQL.Schema.Pubs
                             subscriptionService.Notify(new SubscriptionEventData()
                             {
                                 Id = Guid.NewGuid().ToString(),
-                                MessageType = MessageType.AuthorAdded,
-                                Data = JsonSerializer.Serialize<Author>(author, new JsonSerializerOptions()
+                                MessageType = MessageType.BookAdded,
+                                Data = JsonSerializer.Serialize<Book>(newBook, new JsonSerializerOptions()
                                 {
                                     ReferenceHandler = ReferenceHandler.IgnoreCycles,
                                     MaxDepth = 5,

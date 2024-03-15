@@ -14,6 +14,7 @@ namespace BasicAuthGraphQL.Schema.Pubs
             [FromServices] AuthorRepo authorRepo,
             BookRepo bookRepo,
             ISubscriptionService subscriptionService,
+            IGraphQLTextSerializer serializer,
             ILogger<AuthorMutation> logger)
         {
             Name = "AuthorMutations";
@@ -32,20 +33,19 @@ namespace BasicAuthGraphQL.Schema.Pubs
                             var newBook = await bookRepo.AddBookAsync(bk.Name, bk.Genre, bk.Published, newAuthor);
                             newAuthor.Books.Add(newBook);
                             //subscriptionService.Notify(new SubscriptionEventData(){Id = bk.Id, MessageType = MessageType.AuthorAdded, Data = bk.Name ,At = DateTime.Now});
-                            subscriptionService.Notify(new SubscriptionEventData()
-                            {
-                                Id = Guid.NewGuid().ToString(),
-                                MessageType = MessageType.BookAdded,
-                                Data = JsonSerializer.Serialize<Book>(bk, new JsonSerializerOptions()
-                                {
-                                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
-                                    MaxDepth = 5,
-                                    WriteIndented = true
-                                }),
-                                At = DateTime.Now
-                            });
                         }
-
+                        subscriptionService.Notify(new SubscriptionEventData()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            MessageType = MessageType.AuthorAdded,
+                            Data = JsonSerializer.Serialize<Author>(newAuthor, new JsonSerializerOptions()
+                            {
+                                ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                                MaxDepth = 5,
+                                WriteIndented = true
+                            }),
+                            At = DateTime.Now
+                        });
                         return newAuthor;
                     })
                 .AuthorizeWithPolicy(Constants.POLICY_UPDATE);

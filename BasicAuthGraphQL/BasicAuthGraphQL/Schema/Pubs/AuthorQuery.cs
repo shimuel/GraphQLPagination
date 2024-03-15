@@ -28,6 +28,7 @@ namespace BasicAuthGraphQL.Schema.Pubs
             Connection<AuthorType>()
                 .Name("searchAuthor")
                 .AuthorizeWithPolicy(Constants.POLICY_READ)
+                .Bidirectional()
                 .Resolve(context =>
                 {
                     //ConnectionUtils.ToConnection(context.Source.Friends, context);

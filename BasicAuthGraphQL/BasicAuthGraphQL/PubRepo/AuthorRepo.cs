@@ -83,9 +83,9 @@ namespace BasicAuthGraphQL.PubRepo
         {
             lock (_authors)
             {
-                for (int i = 1; i < 4; i++)
+                for (int i = 1; i < 10; i++)
                 {
-                    Author author1 = new Author() { Id = Interlocked.Increment(ref _id), Name = $"Alex {i}", Books = new List<Book>() };
+                    Author author1 = new Author() { Id = Interlocked.Increment(ref _id), Name = $"Alex {_id}", Books = new List<Book>() };
                     for (int j = 1; j < 5; j++)
                     {
                         bookRepo.AddBookAsync(bookName: $"{author1.Name}'s book {j}", genre: "", true, author1);

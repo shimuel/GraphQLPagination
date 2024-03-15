@@ -132,16 +132,16 @@ app.UseGraphQLPlayground("/ui/playground",
 app.UseHttpsRedirection();
 
 // to setup requirement claim(s) based access
-app.MapGet("/login", [Microsoft.AspNetCore.Authorization.Authorize] () => true).WithName("login");
+//app.MapGet("/login", [Microsoft.AspNetCore.Authorization.Authorize] () => true).WithName("login");
 
-app.UseEndpoints(endpoints =>
-{
-    // configure the graphql endpoint at "/graphql"
-    endpoints.MapGraphQL("/graphql")
-        .RequireCors("MyCorsPolicy").RequireAuthorization(policyNames: Constants.POLICY_UI);
-    // configure Playground at "/"
-    //endpoints.MapGraphQLPlayground("/ui/playground");
-});
+//app.UseEndpoints(endpoints =>
+//{
+//    // configure the graphql endpoint at "/graphql"
+//    endpoints.MapGraphQL("/graphql")
+//        .RequireCors("MyCorsPolicy").RequireAuthorization(policyNames: Constants.POLICY_UI);
+//    // configure Playground at "/"
+//    endpoints.MapGraphQLPlayground("/ui/playground");
+//});
 
 //app.MapGet("/ui/playground", [Microsoft.AspNetCore.Authorization.Authorize(Policy = Constants.POLICY_UI)] () =>
 //{
